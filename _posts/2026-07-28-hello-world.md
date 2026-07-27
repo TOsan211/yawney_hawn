@@ -3,6 +3,6 @@ layout: post
 title: "Hello, Jekyll"
 ---
 
-Jekyll でのブログ運用を開始しました。
+This blog is now running on Jekyll.
 
-これは動作確認用の最初の記事です。
+This is the first post, just to confirm everything works.

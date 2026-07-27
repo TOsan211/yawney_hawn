@@ -6,4 +6,4 @@ permalink: /about/
 
 # About
 
-Yawney Hawn のブログです。
+This is the Yawney Hawn blog.
