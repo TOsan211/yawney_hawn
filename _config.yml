@@ -1,0 +1,24 @@
+title: Yawney Hawn
+description: Yawney Hawn のブログ
+author: TOsan211
+lang: ja
+
+url: "https://TOsan211.github.io"
+baseurl: ""
+
+markdown: kramdown
+permalink: /posts/:year/:month/:day/:title/
+
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+sass:
+  style: compressed
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - node_modules
+  - vendor

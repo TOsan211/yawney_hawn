@@ -4,3 +4,11 @@ dist
 logs
 tmp
 .env
+
+# Jekyll
+_site
+.sass-cache
+.jekyll-cache
+.jekyll-metadata
+.bundle
+vendor

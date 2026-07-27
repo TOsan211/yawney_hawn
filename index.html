@@ -1,0 +1,15 @@
+---
+layout: default
+title: Home
+---
+<ul class="post-list">
+  {% for post in site.posts %}
+  <li>
+    <h2 class="post-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+    <p class="post-meta">{{ post.date | date: "%Y年%m月%d日" }}</p>
+    <p>{{ post.excerpt | strip_html | truncate: 120 }}</p>
+  </li>
+  {% else %}
+  <li>まだ投稿がありません。</li>
+  {% endfor %}
+</ul>

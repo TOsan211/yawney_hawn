@@ -1,63 +1,57 @@
 # yawney_hawn
 
-GitHub Pages で公開するための静的サイトプロジェクトです。
+Jekyll で構築し、GitHub Pages (GitHub Actions ビルド) で公開するブログです。
 
 ## フォルダ構成
 
 ```
 yawney_hawn/
-├── src/                # 開発用ソース（テンプレート/コンポーネント等を置く場所）
-├── assets/             # 開発用アセット（source of truth）
-│   ├── css/
-│   │   └── style.css
-│   ├── js/
-│   │   └── main.js
+├── _config.yml          # Jekyll サイト設定
+├── _layouts/            # ページテンプレート (default.html, post.html)
+├── _includes/           # 共通パーツ (header.html, footer.html)
+├── _posts/              # ブログ記事 (YYYY-MM-DD-title.md)
+├── assets/
+│   ├── css/style.scss   # サイトCSS (Sass front matter付き)
+│   ├── js/main.js
 │   └── img/
-├── public/              # 開発用エントリーポイント（../assets を参照）
-│   └── index.html
-├── docs/                # ★ GitHub Pages 公開フォルダ（自己完結）
-│   ├── index.html
-│   └── assets/
-│       ├── css/style.css
-│       ├── js/main.js
-│       └── img/
-├── .gitignore
-└── README.md
+├── index.html           # トップページ (記事一覧)
+├── about.md              # Aboutページ
+├── Gemfile
+└── .github/workflows/jekyll-gh-pages.yml  # GitHub Actions で build & deploy
 ```
 
-## GitHub Pages 公開について
-
-GitHub の Settings → Pages で選べる公開元フォルダは **`/ (root)` または `/docs` の2択のみ**で、
-`/public` は選択肢に存在しません。そのため、このプロジェクトでは `docs/` を実際の公開フォルダとして使います。
-
-- `public/` … 開発用のエントリーポイント。`assets/` を `../assets/...` で参照（編集の起点）
-- `docs/`   … `public/index.html` と `assets/` の内容をコピーし、パスを `assets/...`（相対）に調整した**自己完結フォルダ**。これがそのまま公開される
-
-`assets/` や `public/index.html` を編集したら、`docs/` にも同じ変更を反映してください。
+## ローカル環境構築
 
 ```bash
-cp public/index.html docs/index.html
-cp assets/css/style.css docs/assets/css/style.css
-cp assets/js/main.js docs/assets/js/main.js
+bundle install
+bundle exec jekyll serve
 ```
 
-## ローカルでの確認
+`http://localhost:4000/` でプレビューできます。
 
-```bash
-npx serve docs
+## 新しい記事の書き方
+
+`_posts/` に `YYYY-MM-DD-タイトル.md` という名前でファイルを作成します。
+
+```markdown
+---
+layout: post
+title: "記事タイトル"
+---
+
+本文をここに書きます。
 ```
 
-## 公開手順
+## 公開の仕組み
 
-1. GitHub にリポジトリを作成し push（下記コマンド参照）
-2. GitHub → Settings → Pages → Branch: `main` / Folder: `/docs` を選択
-3. 数分後、`https://TOsan211.github.io/yawney_hawn/` でアクセス可能
+`main` ブランチに push すると `.github/workflows/jekyll-gh-pages.yml` が自動的に Jekyll サイトをビルドし、GitHub Pages にデプロイします。
+
+初回のみ、GitHub リポジトリの Settings → Pages → Build and deployment → Source で **GitHub Actions** を選択してください。
 
 ```bash
-git init
 git add .
-git commit -m "initial commit"
-git branch -M main
-git remote add origin https://github.com/TOsan211/yawney_hawn.git
-git push -u origin main
+git commit -m "Set up Jekyll blog"
+git push
 ```
+
+数分後、`https://TOsan211.github.io/yawney_hawn/` でアクセス可能になります。

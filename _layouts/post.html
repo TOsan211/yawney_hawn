@@ -1,0 +1,10 @@
+---
+layout: default
+---
+<article>
+  <h2 class="post-title">{{ page.title }}</h2>
+  <p class="post-meta">{{ page.date | date: "%Y年%m月%d日" }}</p>
+  {{ content }}
+</article>
+
+<p class="post-nav"><a href="{{ '/' | relative_url }}">&larr; 一覧に戻る</a></p>
