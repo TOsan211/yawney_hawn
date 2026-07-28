@@ -215,7 +215,10 @@ footer {
   &::after {
     content: "";
     display: block;
-    min-height: 100vh;
+    // hero-top finishes its own lift after 100vh of scroll, but the post
+    // list's sticky window is deliberately longer than that so scrolling
+    // keeps "idling" for a while (nothing visibly moves) before it releases.
+    min-height: calc(100vh + 30vh);
   }
 }
 
@@ -228,6 +231,7 @@ footer {
   padding: 0;
   min-height: 100vh;
   background: #fafafa;
+  padding-top: 3rem;
 }
 
 .post-list li {
