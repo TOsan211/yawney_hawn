@@ -6,11 +6,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let ticking = false;
     let zoneStart = 0;
 
-    // .post-list is plain normal-flow content sitting right after
-    // .hero-spacer, so it scrolls into view under its own natural motion --
-    // no fixed/sticky toggling needed there. hero-top just has to translate
-    // (and fade) away in sync with that same scroll distance, measured from
-    // the spacer's actual document position, so the two stay lined up.
+    // .post-list is sticky (see .post-curtain's ::after spacer trick in
+    // style.scss, same technique as css-tricks.com/css-raise-the-curtains-effect),
+    // so it stays pinned natively while hero-top lifts. hero-top's transform
+    // is driven by the same scroll range, measured from the spacer's actual
+    // document position, so the two stay lined up.
     const measureZoneStart = () => {
       zoneStart = spacer.getBoundingClientRect().top + window.scrollY;
     };
