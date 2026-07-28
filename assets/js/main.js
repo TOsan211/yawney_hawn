@@ -1,18 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
   const hero = document.querySelector(".hero-top");
-  const spacer = document.querySelector(".hero-spacer");
+  const curtain = document.querySelector(".post-curtain");
 
-  if (hero && spacer) {
+  if (hero && curtain) {
     let ticking = false;
     let zoneStart = 0;
 
     // .post-list is sticky (see .post-curtain's ::after spacer trick in
     // style.scss, same technique as css-tricks.com/css-raise-the-curtains-effect),
-    // so it stays pinned natively while hero-top lifts. hero-top's transform
-    // is driven by the same scroll range, measured from the spacer's actual
-    // document position, so the two stay lined up.
+    // so it stays pinned natively for exactly 100vh of scroll starting at
+    // .post-curtain's own natural document position. hero-top's transform is
+    // driven by that same scroll range so the curtain finishes lifting right
+    // as the post list unsticks -- no separate spacer needed.
     const measureZoneStart = () => {
-      zoneStart = spacer.getBoundingClientRect().top + window.scrollY;
+      zoneStart = curtain.getBoundingClientRect().top + window.scrollY;
     };
 
     const updateHero = () => {
