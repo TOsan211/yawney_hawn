@@ -2,6 +2,13 @@
 layout: default
 title: Home
 ---
+<section class="hero-top" id="hero-top">
+  <div class="hero-top__inner">
+    <h2 class="hero-top__title">{{ site.title }}</h2>
+    <p class="hero-top__tagline">{{ site.description }}</p>
+  </div>
+</section>
+
 <ul class="post-list">
   {% for post in site.posts %}
   <li>
