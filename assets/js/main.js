@@ -1,41 +1,27 @@
 document.addEventListener("DOMContentLoaded", () => {
   const hero = document.querySelector(".hero-top");
-  const postPanel = document.querySelector(".post-list-panel");
-  const spacer = document.querySelector(".hero-reveal__spacer");
+  const headerEl = document.querySelector("header");
 
-  if (hero && postPanel && spacer) {
+  if (hero) {
     let ticking = false;
 
-    // hero-top / post-list-panel are both position:fixed, so they contribute
-    // zero height to the document flow while pinned. The spacer has to make
-    // up for that by reserving enough room for scrollY to actually reach one
-    // full viewport height, on top of whatever the header/footer occupy.
-    const sizeSpacer = () => {
-      const headerEl = document.querySelector("header");
-      const footerEl = document.querySelector("footer");
-      const headerHeight = headerEl ? headerEl.offsetHeight : 0;
-      const footerHeight = footerEl ? footerEl.offsetHeight : 0;
-      const vh = window.innerHeight;
-      const needed = vh * 2 - headerHeight - footerHeight;
-      spacer.style.height = `${Math.max(needed, vh)}px`;
-    };
-
+    // The post list is normal-flow content that sits right after a 100vh
+    // spacer, so it scrolls into view on its own as the user scrolls -- no
+    // fixed/static toggling needed. hero-top just needs to translate away in
+    // sync with that same scroll distance so the two stay lined up. The
+    // headerHeight offset accounts for the header sitting above hero-top in
+    // the document (hero-top is covering it visually until this catches up).
     const updateHero = () => {
+      const headerHeight = headerEl ? headerEl.offsetHeight : 0;
       const vh = window.innerHeight;
-      const progress = Math.min(Math.max(window.scrollY / vh, 0), 1);
+      const progress = Math.min(Math.max((window.scrollY - headerHeight) / vh, 0), 1);
 
       hero.style.transform = `translateY(${progress * -100}vh)`;
-
-      if (progress >= 1) {
-        postPanel.classList.add("is-released");
-      } else {
-        postPanel.classList.remove("is-released");
-      }
 
       ticking = false;
     };
 
-    window.addEventListener("resize", sizeSpacer);
+    window.addEventListener("resize", updateHero);
 
     window.addEventListener(
       "scroll",
@@ -48,7 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
       { passive: true }
     );
 
-    sizeSpacer();
     updateHero();
   }
 
