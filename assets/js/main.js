@@ -1,27 +1,34 @@
 document.addEventListener("DOMContentLoaded", () => {
   const hero = document.querySelector(".hero-top");
-  const headerEl = document.querySelector("header");
+  const postPinWrapper = document.querySelector(".post-pin-wrapper");
 
-  if (hero) {
+  if (hero && postPinWrapper) {
     let ticking = false;
+    let zoneStart = 0;
 
-    // The post list is normal-flow content that sits right after a 100vh
-    // spacer, so it scrolls into view on its own as the user scrolls -- no
-    // fixed/static toggling needed. hero-top just needs to translate away in
-    // sync with that same scroll distance so the two stay lined up. The
-    // headerHeight offset accounts for the header sitting above hero-top in
-    // the document (hero-top is covering it visually until this catches up).
+    // .post-list inside .post-pin-wrapper is position:sticky, so it stays
+    // pinned to the top of the viewport for exactly 100vh of scroll starting
+    // at the wrapper's natural document position (see the padding-bottom
+    // trick in style.scss), then releases and scrolls normally. hero-top's
+    // lift animation is driven by the same scroll range so the two stay in
+    // sync: the curtain finishes lifting exactly as the post list unsticks.
+    const measureZoneStart = () => {
+      zoneStart = postPinWrapper.getBoundingClientRect().top + window.scrollY;
+    };
+
     const updateHero = () => {
-      const headerHeight = headerEl ? headerEl.offsetHeight : 0;
       const vh = window.innerHeight;
-      const progress = Math.min(Math.max((window.scrollY - headerHeight) / vh, 0), 1);
+      const progress = Math.min(Math.max((window.scrollY - zoneStart) / vh, 0), 1);
 
       hero.style.transform = `translateY(${progress * -100}vh)`;
 
       ticking = false;
     };
 
-    window.addEventListener("resize", updateHero);
+    window.addEventListener("resize", () => {
+      measureZoneStart();
+      updateHero();
+    });
 
     window.addEventListener(
       "scroll",
@@ -34,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
       { passive: true }
     );
 
+    measureZoneStart();
     updateHero();
   }
 

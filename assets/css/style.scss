@@ -209,15 +209,22 @@ footer {
   }
 }
 
-.hero-spacer {
-  height: 100vh;
+.post-pin-wrapper {
+  // Reserves 100vh of extra scroll room after the post list's own natural
+  // height, which is what makes the sticky child below stay pinned at top:0
+  // for exactly 100vh of scroll before it releases and scrolls normally.
+  padding-bottom: 100vh;
 }
 
 .post-list {
+  position: sticky;
+  top: 0;
+  z-index: 1;
   list-style: none;
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  background: #fafafa;
 }
 
 .post-list li {
