@@ -133,10 +133,16 @@ header {
 
   &__close {
     margin: 0.25rem 0 0;
+    background: none;
+    border: none;
+    padding: 0;
     color: #888;
+    font: inherit;
     font-size: 0.8rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+    text-align: left;
+    cursor: pointer;
   }
 }
 

@@ -48,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const toggle = document.querySelector(".menu-toggle");
   const menu = document.querySelector(".site-menu");
+  const closeButton = document.querySelector(".site-menu__close");
   if (!toggle || !menu) return;
 
   const openMenu = () => {
@@ -70,6 +71,10 @@ document.addEventListener("DOMContentLoaded", () => {
       openMenu();
     }
   });
+
+  if (closeButton) {
+    closeButton.addEventListener("click", () => closeMenu());
+  }
 
   document.addEventListener("click", (event) => {
     if (menu.classList.contains("is-open") && !menu.contains(event.target) && !toggle.contains(event.target)) {
