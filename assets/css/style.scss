@@ -1,12 +1,36 @@
 ---
 ---
+@font-face {
+  font-family: "Asap Condensed";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("{{ '/assets/fonts/asap-condensed-400.woff2' | relative_url }}") format("woff2");
+}
+
+@font-face {
+  font-family: "Asap Condensed";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("{{ '/assets/fonts/asap-condensed-600.woff2' | relative_url }}") format("woff2");
+}
+
+@font-face {
+  font-family: "Asap Condensed";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("{{ '/assets/fonts/asap-condensed-700.woff2' | relative_url }}") format("woff2");
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: -apple-system, "Segoe UI", "Hiragino Kaku Gothic ProN", sans-serif;
+  font-family: "Asap Condensed", sans-serif;
   line-height: 1.6;
   color: #222;
   background: #fafafa;
