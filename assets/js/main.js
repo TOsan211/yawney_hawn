@@ -1,8 +1,24 @@
 document.addEventListener("DOMContentLoaded", () => {
   const hero = document.querySelector(".hero-top");
   const postPanel = document.querySelector(".post-list-panel");
-  if (hero && postPanel) {
+  const spacer = document.querySelector(".hero-reveal__spacer");
+
+  if (hero && postPanel && spacer) {
     let ticking = false;
+
+    // hero-top / post-list-panel are both position:fixed, so they contribute
+    // zero height to the document flow while pinned. The spacer has to make
+    // up for that by reserving enough room for scrollY to actually reach one
+    // full viewport height, on top of whatever the header/footer occupy.
+    const sizeSpacer = () => {
+      const headerEl = document.querySelector("header");
+      const footerEl = document.querySelector("footer");
+      const headerHeight = headerEl ? headerEl.offsetHeight : 0;
+      const footerHeight = footerEl ? footerEl.offsetHeight : 0;
+      const vh = window.innerHeight;
+      const needed = vh * 2 - headerHeight - footerHeight;
+      spacer.style.height = `${Math.max(needed, vh)}px`;
+    };
 
     const updateHero = () => {
       const vh = window.innerHeight;
@@ -19,6 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
       ticking = false;
     };
 
+    window.addEventListener("resize", sizeSpacer);
+
     window.addEventListener(
       "scroll",
       () => {
@@ -30,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
       { passive: true }
     );
 
+    sizeSpacer();
     updateHero();
   }
 
