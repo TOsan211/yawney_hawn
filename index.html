@@ -9,7 +9,7 @@ title: Home
   </div>
 </section>
 
-<div class="post-curtain">
+<section class="post-curtain">
   <ul class="post-list">
     {% for post in site.posts %}
     <li>
@@ -21,4 +21,6 @@ title: Home
     <li>No posts yet.</li>
     {% endfor %}
   </ul>
-</div>
+</section>
+
+<script src="{{ '/assets/js/hero-sync.js' | relative_url }}"></script>
