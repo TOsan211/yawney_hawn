@@ -9,16 +9,16 @@ title: Home
   </div>
 </section>
 
-<div class="post-pin-wrapper">
-  <ul class="post-list">
-    {% for post in site.posts %}
-    <li>
-      <h2 class="post-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
-      <p class="post-meta">{{ post.date | date: "%B %-d, %Y" }}</p>
-      <p>{{ post.excerpt | strip_html | truncate: 120 }}</p>
-    </li>
-    {% else %}
-    <li>No posts yet.</li>
-    {% endfor %}
-  </ul>
-</div>
+<div class="hero-spacer" aria-hidden="true"></div>
+
+<ul class="post-list">
+  {% for post in site.posts %}
+  <li>
+    <h2 class="post-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+    <p class="post-meta">{{ post.date | date: "%B %-d, %Y" }}</p>
+    <p>{{ post.excerpt | strip_html | truncate: 120 }}</p>
+  </li>
+  {% else %}
+  <li>No posts yet.</li>
+  {% endfor %}
+</ul>

@@ -1,19 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
   const hero = document.querySelector(".hero-top");
-  const postPinWrapper = document.querySelector(".post-pin-wrapper");
+  const spacer = document.querySelector(".hero-spacer");
 
-  if (hero && postPinWrapper) {
+  if (hero && spacer) {
     let ticking = false;
     let zoneStart = 0;
 
-    // .post-list inside .post-pin-wrapper is position:sticky, so it stays
-    // pinned to the top of the viewport for exactly 100vh of scroll starting
-    // at the wrapper's natural document position (see the padding-bottom
-    // trick in style.scss), then releases and scrolls normally. hero-top's
-    // lift animation is driven by the same scroll range so the two stay in
-    // sync: the curtain finishes lifting exactly as the post list unsticks.
+    // .post-list is plain normal-flow content sitting right after
+    // .hero-spacer, so it scrolls into view under its own natural motion --
+    // no fixed/sticky toggling needed there. hero-top just has to translate
+    // (and fade) away in sync with that same scroll distance, measured from
+    // the spacer's actual document position, so the two stay lined up.
     const measureZoneStart = () => {
-      zoneStart = postPinWrapper.getBoundingClientRect().top + window.scrollY;
+      zoneStart = spacer.getBoundingClientRect().top + window.scrollY;
     };
 
     const updateHero = () => {
@@ -21,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const progress = Math.min(Math.max((window.scrollY - zoneStart) / vh, 0), 1);
 
       hero.style.transform = `translateY(${progress * -100}vh)`;
+      hero.style.opacity = String(1 - progress);
 
       ticking = false;
     };
