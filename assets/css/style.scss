@@ -88,6 +88,12 @@ header {
   color: inherit;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: opacity 0.2s ease;
+
+  &[aria-expanded="true"] {
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 
 .site-menu {
