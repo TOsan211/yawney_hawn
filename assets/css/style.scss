@@ -72,9 +72,14 @@ header {
 }
 
 .menu-toggle {
-  background: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 45;
+  background: #fff;
   border: none;
-  padding: 0;
+  border-bottom-left-radius: 10px;
+  padding: 1.25rem 1.75rem;
   font: inherit;
   font-weight: 700;
   font-size: 0.9rem;
@@ -82,11 +87,12 @@ header {
   text-transform: uppercase;
   color: inherit;
   cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .site-menu {
   position: fixed;
-  top: 0;
+  top: -80px;
   right: 0;
   z-index: 50;
   display: flex;
