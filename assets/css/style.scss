@@ -210,30 +210,14 @@ footer {
 }
 
 .hero-spacer {
-  height: 200px;
-}
-
-.post-reserve {
-  height: 0;
-}
-
-.post-section {
-  &.is-pinned {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 100vh;
-    z-index: 1;
-    overflow: hidden;
-    background: #fafafa;
-  }
+  height: 100vh;
 }
 
 .post-list {
   list-style: none;
   margin: 0;
   padding: 0;
+  min-height: 100vh;
 }
 
 .post-list li {

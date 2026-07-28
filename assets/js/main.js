@@ -1,47 +1,40 @@
 document.addEventListener("DOMContentLoaded", () => {
   const hero = document.querySelector(".hero-top");
   const spacer = document.querySelector(".hero-spacer");
-  const postSection = document.querySelector(".post-section");
-  const postReserve = document.querySelector(".post-reserve");
 
-  if (hero && spacer && postSection && postReserve) {
+  if (hero && spacer) {
     let ticking = false;
     let zoneStart = 0;
-    let pinned = null; // tri-state so the first run always applies something
 
+    // .post-list is plain normal-flow content sitting right after
+    // .hero-spacer, so it scrolls into view under its own natural motion --
+    // no fixed/sticky toggling needed there. hero-top just has to translate
+    // (and fade) away in sync with that same scroll distance, measured from
+    // the spacer's actual document position, so the two stay lined up.
     const measureZoneStart = () => {
       zoneStart = spacer.getBoundingClientRect().top + window.scrollY;
     };
 
-    const update = () => {
+    const updateHero = () => {
       const vh = window.innerHeight;
       const progress = Math.min(Math.max((window.scrollY - zoneStart) / vh, 0), 1);
 
       hero.style.transform = `translateY(${progress * -100}vh)`;
       hero.style.opacity = String(1 - progress);
 
-      const shouldPin = progress < 1;
-      if (shouldPin !== pinned) {
-        pinned = shouldPin;
-        postSection.classList.toggle("is-pinned", pinned);
-      }
-      // Recomputed every run (not just on state change) so a resize while
-      // still pinned doesn't leave a stale reserve height from the old vh.
-      postReserve.style.height = pinned ? `${vh * 2}px` : "0px";
-
       ticking = false;
     };
 
     window.addEventListener("resize", () => {
       measureZoneStart();
-      update();
+      updateHero();
     });
 
     window.addEventListener(
       "scroll",
       () => {
         if (!ticking) {
-          window.requestAnimationFrame(update);
+          window.requestAnimationFrame(updateHero);
           ticking = true;
         }
       },
@@ -49,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     measureZoneStart();
-    update();
+    updateHero();
   }
 
   const toggle = document.querySelector(".menu-toggle");
