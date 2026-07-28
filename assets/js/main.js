@@ -1,13 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
   const hero = document.querySelector(".hero-top");
-  if (hero) {
+  const postPanel = document.querySelector(".post-list-panel");
+  if (hero && postPanel) {
     let ticking = false;
 
     const updateHero = () => {
-      const heroHeight = hero.offsetHeight || window.innerHeight;
-      const progress = Math.min(Math.max(window.scrollY / heroHeight, 0), 1);
-      hero.style.opacity = String(1 - progress);
-      hero.style.transform = `translateY(${progress * -80}px)`;
+      const vh = window.innerHeight;
+      const progress = Math.min(Math.max(window.scrollY / vh, 0), 1);
+
+      hero.style.transform = `translateY(${progress * -100}vh)`;
+
+      if (progress >= 1) {
+        postPanel.classList.add("is-released");
+      } else {
+        postPanel.classList.remove("is-released");
+      }
+
       ticking = false;
     };
 

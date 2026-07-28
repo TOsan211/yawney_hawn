@@ -182,19 +182,28 @@ footer {
   border-top: 1px solid #e0e0e0;
 }
 
-.hero-top {
+.hero-reveal {
   position: relative;
-  width: 100vw;
-  margin-left: calc(-50vw + 50%);
-  margin-top: -1.5rem;
+}
+
+.hero-reveal__spacer {
   height: 100vh;
+}
+
+.hero-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   padding: 1.5rem;
   background: #fafafa;
-  will-change: transform, opacity;
+  will-change: transform;
 
   &__title {
     font-size: clamp(2.5rem, 8vw, 5rem);
@@ -205,6 +214,29 @@ footer {
     color: #666;
     font-size: 1.1rem;
     margin: 0;
+  }
+}
+
+.post-list-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  z-index: 1;
+  overflow: hidden;
+  background: #fafafa;
+
+  &.is-released {
+    position: static;
+    height: auto;
+    overflow: visible;
+  }
+
+  &__inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 1.5rem;
   }
 }
 
