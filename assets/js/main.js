@@ -15,7 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
     toggle.setAttribute("aria-expanded", "false");
   };
 
-  toggle.addEventListener("click", () => {
+  toggle.addEventListener("click", (event) => {
+    event.preventDefault();
     if (menu.classList.contains("is-open")) {
       closeMenu();
     } else {
