@@ -12,3 +12,6 @@ _site
 .jekyll-metadata
 .bundle
 vendor
+
+# Claude Code
+.claude
