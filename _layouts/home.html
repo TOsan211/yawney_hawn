@@ -1,0 +1,15 @@
+---
+layout: default
+---
+<section class="hero-top" id="hero-top">
+  <div class="hero-top__inner">
+    <h2 class="hero-top__title">{{ site.title }}</h2>
+    <p class="hero-top__tagline">Let’s embrace the gentle, messy side of life</p>
+  </div>
+</section>
+
+<section class="post-curtain" id="latest-posts">
+  {{ content }}
+</section>
+
+<script src="{{ '/assets/js/hero-sync.js' | relative_url }}"></script>

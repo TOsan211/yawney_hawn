@@ -224,29 +224,95 @@ footer {
     // hero-top finishes its own lift after 100vh of scroll, but the post
     // list's sticky window is deliberately longer than that so scrolling
     // keeps "idling" for a while (nothing visibly moves) before it releases.
-    min-height: calc(100vh + 30vh);
+    // +100vh here accounts for the .latest-post spotlight riding along
+    // inside the same sticky wrapper on the home page.
+    min-height: calc(200vh + 30vh);
+  }
+
+  // Paginated pages beyond page 1 render with no hero-top to uncover, so skip
+  // the sticky/spacer curtain trick entirely and lay the list out normally.
+  &--plain {
+    &::after {
+      display: none;
+    }
+
+    .post-list-wrap {
+      position: static;
+      min-height: 0;
+      padding-top: 0;
+    }
   }
 }
 
-.post-list {
+// Sticky/min-height live here (not on .post-list) so the pagination nav
+// riding along inside the wrapper stays pinned with the visible posts,
+// instead of appearing only after scrolling past a full extra viewport.
+.post-list-wrap {
   position: sticky;
   top: 0;
   z-index: 1;
-  list-style: none;
-  margin: 0;
-  padding: 0;
   min-height: 100vh;
   background: #fafafa;
   padding-top: 3rem;
 }
 
+.latest-post {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.75rem;
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #e0e0e0;
+
+  &__eyebrow {
+    margin: 0;
+    color: #888;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: clamp(1.75rem, 5vw, 2.75rem);
+
+    a {
+      color: inherit;
+    }
+  }
+
+  &__excerpt {
+    margin: 0;
+    color: #444;
+    font-size: 1.05rem;
+  }
+}
+
+.post-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem 1.75rem;
+  align-items: start;
+}
+
 .post-list li {
-  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .post-list .post-title {
   font-size: 1.15rem;
   margin: 0 0 0.25rem;
+
+  a {
+    color: inherit;
+  }
 }
 
 .post-list .post-meta,
@@ -262,4 +328,24 @@ article img {
 
 .post-nav {
   margin-top: 2rem;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e0e0e0;
+
+  &__status {
+    color: #888;
+    font-size: 0.85rem;
+  }
+
+  &__prev,
+  &__next {
+    font-weight: 700;
+  }
 }

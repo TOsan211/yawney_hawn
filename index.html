@@ -1,26 +1,44 @@
 ---
-layout: default
+layout: home
 title: Home
+pagination:
+  enabled: true
 ---
-<section class="hero-top" id="hero-top">
-  <div class="hero-top__inner">
-    <h2 class="hero-top__title">{{ site.title }}</h2>
-    <p class="hero-top__tagline">{{ site.description }}</p>
-  </div>
-</section>
+<div class="post-list-wrap">
+  {% if page.layout == "home" %}
+  {% assign latest = site.posts.first %}
+  {% if latest %}
+  <section class="latest-post">
+    <p class="latest-post__eyebrow">Latest Post</p>
+    <h3 class="latest-post__title"><a href="{{ latest.url | relative_url }}">{{ latest.title }}</a></h3>
+    <p class="latest-post__excerpt">{{ latest.excerpt | strip_html | truncate: 160 }}</p>
+    <p class="post-meta">{{ latest.date | date: "%B %-d, %Y" }}</p>
+  </section>
+  {% endif %}
+  {% endif %}
 
-<section class="post-curtain">
+  <h2>Latest Posts</h2>
   <ul class="post-list">
-    {% for post in site.posts %}
+    {% for post in paginator.posts %}
     <li>
-      <h2 class="post-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
-      <p class="post-meta">{{ post.date | date: "%B %-d, %Y" }}</p>
+      <h3 class="post-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
       <p>{{ post.excerpt | strip_html | truncate: 120 }}</p>
+      <p class="post-meta">{{ post.date | date: "%B %-d, %Y" }}</p>
     </li>
     {% else %}
     <li>No posts yet.</li>
     {% endfor %}
   </ul>
-</section>
 
-<script src="{{ '/assets/js/hero-sync.js' | relative_url }}"></script>
+  {% if paginator.total_pages > 1 %}
+  <nav class="pagination" aria-label="Post pagination">
+    {% if paginator.previous_page %}
+    <a href="{{ paginator.previous_page_path | relative_url }}" class="pagination__prev">&larr; Prev</a>
+    {% endif %}
+    <span class="pagination__status">Page {{ paginator.page }} of {{ paginator.total_pages }}</span>
+    {% if paginator.next_page %}
+    <a href="{{ paginator.next_page_path | relative_url }}" class="pagination__next">Next &rarr;</a>
+    {% endif %}
+  </nav>
+  {% endif %}
+</div>

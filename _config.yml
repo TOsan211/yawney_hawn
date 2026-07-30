@@ -12,9 +12,19 @@ permalink: /posts/:year/:month/:day/:title/
 plugins:
   - jekyll-feed
   - jekyll-sitemap
+  - jekyll-paginate-v2
+  - jekyll-seo-tag
 
 sass:
   style: compressed
+
+pagination:
+  enabled: true
+  per_page: 2
+  permalink: '/page/:num/'
+  title: ':title - page :num'
+  sort_field: 'date'
+  sort_reverse: true
 
 exclude:
   - Gemfile
