@@ -330,6 +330,32 @@ article img {
   margin-top: 2rem;
 }
 
+.error-page {
+  padding: 3rem 0;
+  text-align: center;
+
+  &__code {
+    margin: 0;
+    color: #e0e0e0;
+    font-size: clamp(4rem, 18vw, 8rem);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  &__title {
+    margin: 0.5rem 0 0.75rem;
+  }
+
+  &__message {
+    margin: 0 0 1.5rem;
+    color: #666;
+  }
+
+  &__link {
+    font-weight: 700;
+  }
+}
+
 .pagination {
   display: flex;
   align-items: center;
