@@ -11,13 +11,27 @@
   {% endif %}
   {% endif %}
 
-  <h2>Latest Posts</h2>
+  <h2 class="post-list-heading">Newest Articles</h2>
   <ul class="post-list">
     {% for post in paginator.posts %}
-    <li>
-      <h3 class="post-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
-      <p>{{ post.excerpt | strip_html | truncate: 120 }}</p>
-      <p class="post-meta">{{ post.date | date: "%B %-d, %Y" }}</p>
+    <li class="post-card">
+      <div class="post-card__inner">
+        <a href="{{ post.url | relative_url }}" class="post-card__image-link" tabindex="-1" aria-hidden="true">
+          {% if post.image %}
+          <img class="post-card__image" src="{{ post.image | relative_url }}" alt="">
+          {% else %}
+          <div class="post-card__image post-card__image--placeholder"></div>
+          {% endif %}
+        </a>
+        <div class="post-card__body">
+          <p class="post-card__meta">
+            <span class="post-card__date">{{ post.date | date: "%B %Y" }}</span>
+            {% if post.category %}<span class="post-card__category">{{ post.category }}</span>{% endif %}
+          </p>
+          <h3 class="post-card__title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+          <p class="post-card__excerpt">{{ post.excerpt | strip_html | truncate: 120 }}</p>
+        </div>
+      </div>
     </li>
     {% else %}
     <li>No posts yet.</li>

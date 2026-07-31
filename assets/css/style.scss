@@ -200,9 +200,36 @@ footer {
   justify-content: center;
   text-align: center;
   padding: 1.5rem;
-  background: #F5ECD7 url("{{ '/assets/img/background.jpg' | relative_url }}") center / cover no-repeat;
-  color: #4B2E1E;
+  // A faint off-white scrim over the linen/coffee-stain photo lifts the
+  // background's overall lightness a touch, so the dark hero text keeps
+  // contrast even where the texture's own darker patches would otherwise
+  // eat into it.
+  background: linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08)),
+    #F5ECD7 url("{{ '/assets/img/background.jpg' | relative_url }}") center / cover no-repeat;
+  color: #2A1810;
   will-change: transform, opacity;
+
+  &__title,
+  &__tagline {
+    // --hero-text-progress (0 to 1, driven by scroll in main.js / hero-sync.js)
+    // moves a soft blend zone down the text, like caramel syrup dripping
+    // further down a pudding. Syrup already coats the top at rest (progress
+    // 0 gives a 10%-40% blend band) and it spreads to fully cover the text
+    // by the end of the scroll zone (progress 1 pushes the band past 100%).
+    // Bottom (unswept) state is a near-black brown for WCAG contrast against
+    // the textured background; the caramel drip at top is left untouched.
+    background-image: linear-gradient(
+      to bottom,
+      #CC5500 0%,
+      #CC5500 calc(10% + var(--hero-text-progress, 0) * 90%),
+      #2A1810 calc(40% + var(--hero-text-progress, 0) * 90%),
+      #2A1810 100%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
 
   &__title {
     font-size: clamp(2.5rem, 8vw, 5rem);
@@ -210,7 +237,6 @@ footer {
   }
 
   &__tagline {
-    color: #4B2E1E;
     font-size: 1.1rem;
     margin: 0;
   }
@@ -292,31 +318,122 @@ footer {
   }
 }
 
+.post-list-heading {
+  margin: 0 0 2.5rem;
+  text-align: center;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4B2E1E;
+}
+
 .post-list {
   list-style: none;
-  margin: 0;
+  margin: 0 0 2rem;
   padding: 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 2rem 1.75rem;
+  gap: 2.75rem 1.75rem;
   align-items: start;
 }
 
-.post-list li {
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #e0e0e0;
-}
+// Deckle-edge "torn paper" card, finely jagged on all four sides. The
+// shadow lives on the outer .post-card (via filter: drop-shadow, not
+// box-shadow, so it follows the jagged silhouette) while clip-path lives on
+// .post-card__inner -- splitting them across two elements is required
+// because filter and clip-path both apply to the same box in filter ->
+// clip-path order, so a single element's clip-path would cut off its own
+// drop-shadow wherever the shadow extends past the box edge.
+.post-card {
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.08));
 
-.post-list .post-title {
-  font-size: 1.15rem;
-  margin: 0 0 0.25rem;
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    // Same linen photo as the hero, cropped to its top-left corner (away
+    // from the coffee-ring stain, which sits in the lower-right of the
+    // frame). The scrim fades from a light 40% at top to a denser 82% at
+    // bottom, so the body text underneath keeps strong contrast.
+    background: linear-gradient(rgba(255, 255, 255, 0.4), rgb(255 255 255 / 82%)),
+      url("{{ '/assets/img/background.jpg' | relative_url }}") left top / cover no-repeat;
+    clip-path: polygon(
+      0.0% 0.58%, 4.0% 0.36%, 8.0% 0.10%, 12.0% 0.70%, 16.0% 0.08%, 20.0% 0.40%,
+      24.0% 0.55%, 28.0% 0.01%, 32.0% 0.65%, 36.0% 0.24%, 40.0% 0.20%, 44.0% 0.67%,
+      48.0% 0.02%, 52.0% 0.51%, 56.0% 0.44%, 60.0% 0.06%, 64.0% 0.69%, 68.0% 0.14%,
+      72.0% 0.32%, 76.0% 0.61%, 80.0% 0.00%, 84.0% 0.61%, 88.0% 0.32%, 92.0% 0.14%,
+      96.0% 0.69%, 100.0% 0.05%,
+      99.97% 4.0%, 99.51% 8.0%, 99.54% 12.0%, 99.96% 16.0%, 99.31% 20.0%, 99.85% 24.0%,
+      99.70% 28.0%, 99.38% 32.0%, 100.00% 36.0%, 99.41% 40.0%, 99.66% 44.0%, 99.88% 48.0%,
+      99.30% 52.0%, 99.93% 56.0%, 99.58% 60.0%, 99.47% 64.0%, 99.99% 68.0%, 99.34% 72.0%,
+      99.78% 76.0%, 99.78% 80.0%, 99.34% 84.0%, 99.99% 88.0%, 99.47% 92.0%, 99.58% 96.0%,
+      99.93% 100.0%,
+      96.0% 99.95%, 92.0% 99.31%, 88.0% 99.86%, 84.0% 99.68%, 80.0% 99.39%, 76.0% 100.00%,
+      72.0% 99.39%, 68.0% 99.68%, 64.0% 99.86%, 60.0% 99.31%, 56.0% 99.94%, 52.0% 99.56%,
+      48.0% 99.49%, 44.0% 99.98%, 40.0% 99.33%, 36.0% 99.80%, 32.0% 99.76%, 28.0% 99.35%,
+      24.0% 99.99%, 20.0% 99.45%, 16.0% 99.60%, 12.0% 99.92%, 8.0% 99.30%, 4.0% 99.90%,
+      0.0% 99.64%,
+      0.09% 96.0%, 0.38% 92.0%, 0.56% 88.0%, 0.01% 84.0%, 0.65% 80.0%, 0.26% 76.0%,
+      0.19% 72.0%, 0.68% 68.0%, 0.03% 64.0%, 0.50% 60.0%, 0.45% 56.0%, 0.05% 52.0%,
+      0.69% 48.0%, 0.15% 44.0%, 0.31% 40.0%, 0.62% 36.0%, 0.00% 32.0%, 0.60% 28.0%,
+      0.33% 24.0%, 0.13% 20.0%, 0.70% 16.0%, 0.06% 12.0%, 0.43% 8.0%, 0.52% 4.0%
+    );
+  }
 
-  a {
-    color: inherit;
+  &__image-link {
+    display: block;
+  }
+
+  &__image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+
+    &--placeholder {
+      background: linear-gradient(135deg, #efe3c9, #e3d2a8);
+    }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1.1rem 1.25rem 1.75rem;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #888;
+  }
+
+  &__category {
+    font-weight: 700;
+    color: #cc5500;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.2rem;
+
+    a {
+      color: #2a1810;
+    }
+  }
+
+  &__excerpt {
+    margin: 0;
+    color: #444;
+    font-size: 0.95rem;
   }
 }
 
-.post-list .post-meta,
 .post-meta {
   color: #888;
   font-size: 0.85rem;

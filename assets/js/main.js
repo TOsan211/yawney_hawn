@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       hero.style.transform = `translateY(${progress * -100}vh)`;
       hero.style.opacity = String(1 - progress);
+      hero.style.setProperty("--hero-text-progress", String(progress));
 
       ticking = false;
     };
