@@ -3,6 +3,11 @@ description: The Yawney Hawn blog
 author: Yawney Hawn
 lang: en
 
+# Site has no real articles yet -- keep search engines from indexing
+# anything until there's actual content. Flip to false (or remove) once
+# ready to go live.
+noindex: true
+
 url: "https://TOsan211.github.io"
 baseurl: ""
 
