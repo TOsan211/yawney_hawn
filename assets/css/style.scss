@@ -244,7 +244,10 @@ body.is-home header {
 
 .social-x {
   position: fixed;
-  top: 50%;
+  // Roughly a third of the way up from the bottom of the viewport,
+  // rather than dead-center -- was directly competing with vertically
+  // centered content (hero copy, post cards) for the same eye-level band.
+  top: 67%;
   right: 0;
   z-index: 40;
   display: flex;
@@ -338,9 +341,14 @@ footer {
     z-index: 1;
     width: 100%;
     max-width: 420px;
-    // Top padding clears the absolutely-positioned header sitting over
-    // this same area; left padding echoes the header's own inset.
-    padding: 7.5rem 1.5rem 0 2.5rem;
+    // Aligns the tagline's left edge with the same content-column guide
+    // used by header/main/footer (max-width: 720px, centered, 1.5rem
+    // padding). A flat 2.5rem-from-the-edge value used to sit here --
+    // main's own auto-margins grow with viewport width but that fixed
+    // value didn't, so on wide screens the hero text drifted further left
+    // of everything below it instead of sharing one vertical guideline.
+    margin-left: max(1.5rem, calc((100vw - 720px) / 2 + 1.5rem));
+    padding: 7.5rem 1.5rem 0 0;
     text-align: left;
   }
 
@@ -355,6 +363,7 @@ footer {
 
     &__inner {
       max-width: 80vw;
+      margin-left: 0;
       padding: 6.5rem 6vw 0 6vw;
     }
 
