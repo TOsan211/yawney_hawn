@@ -21,9 +21,9 @@
       {% for post in paginator.posts %}
       <li class="post-card">
         <div class="post-card__inner">
-          {% if post.image %}
+          {% if post.thumbnail %}
           <a href="{{ post.url | relative_url }}" class="post-card__image-link" tabindex="-1" aria-hidden="true">
-            <img class="post-card__image" src="{{ post.image | relative_url }}" alt="{{ post.title }}">
+            <img class="post-card__image" src="{{ post.thumbnail | relative_url }}" alt="{{ post.title }}">
           </a>
           {% endif %}
           <div class="post-card__body">

@@ -19,6 +19,11 @@ permalink: /posts/:year/:month/:day/:title/
 # `image:` front matter (see jekyll-seo-tag/image_drop.rb) -- it does NOT
 # fall back to `logo:` above. This default gives every page/post a social
 # preview image unless the page sets its own `image:`.
+# NOTE: this `image:` is for social-share purposes only. The post card
+# grid (_includes/post-list.html) intentionally reads a separate
+# `thumbnail:` front matter key instead of `image:`, so this sitewide
+# default doesn't make every card show the same generic banner -- add
+# `thumbnail:` per-post once real post photos exist.
 defaults:
   - scope:
       path: ""
