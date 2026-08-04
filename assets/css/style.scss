@@ -412,6 +412,56 @@ footer {
     color: #cc5500;
     will-change: transform;
   }
+
+  // A visitor who only sees the hero can miss that there's more below it
+  // -- this bottom-right cue (bouncing chevron) signals "scroll" without
+  // any text, and doubles as a real jump-to-posts link, not just a
+  // decorative hint. Scrolls away naturally with the rest of .hero-top
+  // (unlike .site-title, this isn't fixed, so no JS hide logic needed).
+  // Solid circle badge (same trick as .menu-toggle) rather than a bare
+  // icon with a light drop-shadow: this corner of the photo is dark wood,
+  // where a shadow tuned for light backgrounds nearly disappears.
+  &__scroll-cue {
+    position: absolute;
+    bottom: 2rem;
+    right: 1.75rem;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #4a3626;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #2f2013;
+    }
+  }
+
+  &__scroll-cue-icon {
+    width: 18px;
+    height: 18px;
+    color: #F7F2E6;
+    animation: hero-scroll-cue-bounce 1.8s ease-in-out infinite;
+  }
+}
+
+@keyframes hero-scroll-cue-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-top__scroll-cue-icon {
+    animation: none;
+  }
 }
 
 // .post-curtain / &--plain / .post-list-wrap keep their original class
