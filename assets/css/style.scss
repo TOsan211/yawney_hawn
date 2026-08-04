@@ -28,6 +28,22 @@
   box-sizing: border-box;
 }
 
+// Standard clip-based hiding: off-screen and zero-size but still announced
+// by screen readers, unlike display: none / visibility: hidden. Used to
+// give "Read More" links their own accessible name (see .post-card__read,
+// .latest-post__read) so two links to the same post don't read identically.
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 // Safety net for .hero-top's full-bleed break-out below: its
 // calc(50% - 50vw) margins can be a pixel or two off (this environment's
 // 50vw measures to the outside edge of the scrollbar), which would
@@ -84,15 +100,26 @@ header {
   // separating instead of a line.
   padding-bottom: 3rem;
 
-  h1 {
-    font-size: 0.75rem;
+  // Not a heading -- the page's own h1 is its content (post title, hero
+  // tagline, etc.), not the site name repeated in every page's header.
+  .site-title {
+    font-size: 0.85rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     margin: 0;
+    // Only meaningful on the home page (see .site-title.is-hidden, toggled
+    // by hero-sync.js) -- harmless no-op on other pages since nothing ever
+    // adds the class there.
+    transition: opacity 0.3s ease;
 
     a {
       color: inherit;
+    }
+
+    &.is-hidden {
+      opacity: 0;
+      pointer-events: none;
     }
   }
 }
@@ -111,40 +138,59 @@ body.is-home header {
   z-index: 10;
   padding-bottom: 1.5rem;
 
-  h1,
-  .menu-toggle {
+  .site-title {
     // No background box (it read as a flat bar cutting across the hero
     // photo). A soft shadow keeps the text legible over whatever's behind
     // it -- the image up top, post cards further down -- without ever
-    // covering it.
+    // covering it. .menu-toggle no longer needs this: its solid circle
+    // background already guarantees contrast on its own.
     text-shadow: 0 1px 3px rgba(247, 242, 230, 0.9), 0 1px 8px rgba(247, 242, 230, 0.7);
   }
 }
 
+// Was plain "MENU" text with a soft shadow for legibility -- that shadow
+// wasn't enough once the fixed header scrolled over the warm card
+// backgrounds/gradients further down the page. A solid dark circle gives
+// guaranteed contrast against anything behind it (hero photo, cards, plain
+// body background alike) instead of depending on what's underneath.
 .menu-toggle {
   position: fixed;
-  top: 0;
-  right: 0;
+  top: 1rem;
+  right: 1.25rem;
   z-index: 45;
-  display: inline-block;
-  padding: 1.25rem 1.75rem;
-  font: inherit;
-  font-weight: 700;
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: inherit;
-  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  // Deep coffee brown instead of flat ink black -- same tone as the
+  // article excerpt/meta text elsewhere, so the badge feels warm and part
+  // of the site's palette rather than a generic neutral-black UI button.
+  background-color: #4a3626;
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease, background-color 0.2s ease;
 
   &:hover {
-    text-decoration: none;
+    background-color: #2f2013;
   }
 
   &[aria-expanded="true"] {
     opacity: 0;
     pointer-events: none;
+  }
+
+  &__icon {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      background-color: #F7F2E6;
+    }
   }
 }
 
@@ -253,6 +299,13 @@ footer {
   margin-right: calc(50% - 50vw);
   width: auto;
   height: 100vh;
+  // Layers below (bg image, tagline, subtext) are each nudged by a
+  // different amount as the page scrolls (see hero-sync.js), which is
+  // what produces the parallax depth -- overflow: hidden keeps the
+  // oversized __bg layer's travel room from ever peeking past the
+  // section's own edges.
+  position: relative;
+  overflow: hidden;
   display: flex;
   // The right-hand page now has its own printed line ("What's in store for
   // today?") plus a coffee-ring smiley -- our copy would fight it for
@@ -261,14 +314,28 @@ footer {
   // with good contrast for dark text, no competing detail.
   align-items: flex-start;
   justify-content: flex-start;
-  // Gaze flow: top-left is where reading naturally starts, so the
-  // headline lands there first, then the eye travels down/right into the
-  // photographed scene (illustration, toast, coffee, the book's own
-  // "what's in store" line) as supporting detail -- headline leads, image
-  // follows, rather than competing for the same spot.
-  background: url("{{ '/assets/img/background.png' | relative_url }}") 22% 22% / cover no-repeat;
+
+  // The parallax background image itself. Sized taller than the section
+  // (inset -15% top/bottom) so that translating it up/down as the user
+  // scrolls (hero-sync.js) never exposes a gap at the top or bottom edge.
+  &__bg {
+    position: absolute;
+    top: -15%;
+    left: 0;
+    right: 0;
+    bottom: -15%;
+    // Gaze flow: top-left is where reading naturally starts, so the
+    // headline lands there first, then the eye travels down/right into the
+    // photographed scene (illustration, toast, coffee, the book's own
+    // "what's in store" line) as supporting detail -- headline leads, image
+    // follows, rather than competing for the same spot.
+    background: url("{{ '/assets/img/background.png' | relative_url }}") 22% 22% / cover no-repeat;
+    will-change: transform;
+  }
 
   &__inner {
+    position: relative;
+    z-index: 1;
     width: 100%;
     max-width: 420px;
     // Top padding clears the absolutely-positioned header sitting over
@@ -282,7 +349,9 @@ footer {
   // what lands in the visible frame -- nudging the focal point keeps the
   // plain wall/tablecloth area (not the book's own text) behind the copy.
   @media (max-width: 640px) {
-    background-position: 30% 15%;
+    &__bg {
+      background-position: 30% 15%;
+    }
 
     &__inner {
       max-width: 80vw;
@@ -305,6 +374,7 @@ footer {
     text-transform: uppercase;
     line-height: 1.15;
     color: #1c1b1a;
+    will-change: transform;
 
     // Initial letter picked out in the accent color, slightly larger --
     // no box/border this time, just color and scale doing the work.
@@ -340,6 +410,7 @@ footer {
     font-size: 0.85rem;
     letter-spacing: 0.04em;
     color: #cc5500;
+    will-change: transform;
   }
 }
 
@@ -359,6 +430,16 @@ footer {
   padding-top: 3rem;
 }
 
+// .post-curtain--plain is what jekyll-paginate-v2 renders for page 2+ of
+// the post list (via _layouts/pages.html) -- no hero-top above it, header
+// sits in normal flow instead of fixed-over-photo. The 3rem above was
+// sized to clear the full-bleed hero photo; stacked on top of the header's
+// own padding-bottom and main's padding-top with no hero to justify it,
+// it read as a big dead gap under the header.
+.post-curtain--plain .post-list-wrap {
+  padding-top: 0;
+}
+
 .latest-post {
   // Was min-height: 100vh + justify-content: center, sized to spotlight
   // this section for a full viewport during the (now-disabled) curtain
@@ -369,14 +450,20 @@ footer {
   gap: 0.75rem;
   padding: 3rem 0 2.5rem;
   margin-bottom: 3rem;
-  border-bottom: 2px solid #1c1b1a;
 
+  // Same banded-label treatment as .post-list-heading below -- one shared
+  // header language for both sections. #c9a889 is deepened from the hero
+  // photo's wall/tablecloth tone (see assets/img/background.png) -- the
+  // paler #d8c1a7 this started as read as too washed-out/dusty to anchor
+  // the section on its own.
   &__eyebrow {
-    margin: 0;
-    color: #cc5500;
-    font-size: 0.8rem;
+    margin: 0 0 0.5rem;
+    padding: 0.6rem 1rem;
+    background-color: #c9a889;
+    color: #1c1b1a;
+    font-size: 0.85rem;
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
   }
 
@@ -392,10 +479,38 @@ footer {
     }
   }
 
+  // The post's own frontmatter description -- a short, deliberately
+  // written summary, distinct from the excerpt below it (an auto-pulled
+  // snippet of the body text itself). Italic (not the accent color) is
+  // what sets it apart -- orange stays reserved for read-more links,
+  // links, and first-letter accents rather than whole blocks of text.
+  &__description {
+    margin: 0;
+    color: #1c1b1a;
+    font-size: 1.05rem;
+    font-weight: 600;
+    font-style: italic;
+  }
+
+  // Deepened from #5c4a38 -- that grayish tan read as faded next to the
+  // richer band/gradient tones elsewhere on the page.
   &__excerpt {
     margin: 0;
-    color: #5c4a38;
+    color: #4a3626;
     font-size: 1.05rem;
+  }
+
+  // Same treatment as .post-card__read -- one shared "read more" style
+  // across both sections. align-self: flex-start keeps it a compact,
+  // content-sized link instead of stretching full-width (the flex
+  // column's default align-items: stretch would otherwise apply).
+  &__read {
+    align-self: flex-start;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #cc5500;
   }
 }
 
@@ -404,8 +519,10 @@ footer {
   align-items: baseline;
   gap: 1rem;
   margin: 0 0 2rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid #1c1b1a;
+  // Same warm band as .latest-post__eyebrow, matching its frame -- both
+  // section labels share one header language.
+  padding: 0.6rem 1rem;
+  background-color: #c9a889;
   text-align: left;
   font-size: 0.85rem;
   font-weight: 700;
@@ -449,9 +566,18 @@ footer {
     padding: 1.5rem;
     padding-top: 1rem;
     padding-bottom: 1rem;
-    // Bumped from ~2% alpha (imperceptible) to ~4%, enough to actually
-    // register as a faint warm tint instead of doing nothing.
-    background-color: #903c000a;
+    // Soft diagonal warmth instead of a flat tint -- 135deg runs top-left
+    // to bottom-right, the same corners the brackets below sit in, so the
+    // gradient reinforces that frame rather than fighting it. End color is
+    // the same deepened hero-sampled tan as the section-label bands
+    // (#c9a889), at a slightly higher alpha than the original pass -- that
+    // one blended into the page instead of giving the card its own edge.
+    background: linear-gradient(135deg, rgba(144, 60, 0, 0.05) 0%, rgba(201, 168, 137, 0.24) 100%);
+    // Rest state stays flat (no shadow) -- only :hover below adds one, so
+    // the card's resting identity is unchanged and this reads as a touch
+    // response rather than a permanent box.
+    transform: translateY(0);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 
     &::before,
     &::after {
@@ -469,22 +595,28 @@ footer {
     &::before {
       top: 0;
       left: 0;
-      border-top: 1px solid #b8a488;
-      border-left: 1px solid #b8a488;
+      border-top: 1px solid #a9825a;
+      border-left: 1px solid #a9825a;
     }
 
     &::after {
       bottom: 0;
       right: 0;
-      border-bottom: 1px solid #b8a488;
-      border-right: 1px solid #b8a488;
+      border-bottom: 1px solid #a9825a;
+      border-right: 1px solid #a9825a;
     }
   }
 
-  // Hover: one quiet cue -- brackets deepen from their resting tone to full
-  // ink. No lift/transform and no title color swap; those together read as
-  // too much motion for a plain text card.
+  // Hover: brackets deepen to full ink, same as before, plus a light
+  // Bookshelf-style lift (.bookshelf__cover-link:hover .bookshelf__cover)
+  // -- kept much softer than that book-cover shadow since this is a flat
+  // text card, not a photographed object; it's a nod to that interaction,
+  // not a copy of its weight. No title color swap -- that plus the lift
+  // together would read as too much motion for a plain text card.
   &:hover .post-card__inner {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 14px rgba(28, 27, 26, 0.1);
+
     &::before,
     &::after {
       border-color: #1c1b1a;
@@ -522,20 +654,7 @@ footer {
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #6b5540;
-  }
-
-  // Vivid orange text again, fixed via background this time. #cc5500 is
-  // mid-luminance, so no light or mid-tone background can ever reach
-  // 4.5:1 with it (even pure white only gets to ~4.3:1) -- only a
-  // near-black background works. This uses a warm near-black (coffee,
-  // not neutral ink) instead of #1c1b1a, so it's not a flat UI-black box.
-  &__category {
-    display: inline-block;
-    font-weight: 700;
-    color: #cc5500;
-    background-color: #110702;
-    padding: 0.05em 0.3em;
+    color: #5a4530;
   }
 
   &__title {
@@ -552,15 +671,46 @@ footer {
 
   &__excerpt {
     margin: 0;
-    color: #5c4a38;
+    color: #4a3626;
     font-size: 0.92rem;
+  }
+
+  // margin-top: auto (inner is a column flex, stretched to the row's tallest
+  // card via .post-list's align-items: stretch) pins this to the bottom of
+  // the box regardless of excerpt length; align-self floats it to the right.
+  &__read {
+    align-self: flex-end;
+    margin-top: auto;
+    padding-top: 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #cc5500;
   }
 }
 
+// Was plain browser-default h1 styling (no rule targeted it at all) --
+// pulled into the same bold, tight-tracked editorial voice as
+// .latest-post__title and .post-card__title instead of standing apart.
+.post-title {
+  margin: 0 0 0.5rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  color: #1c1b1a;
+}
+
 .post-meta {
-  color: #6b5540;
+  color: #5a4530;
   font-size: 0.85rem;
   margin: 0 0 1rem;
+  padding-bottom: 1.5rem;
+  // Thin warm seam under the title/date, same tan as the section-label
+  // bands elsewhere -- ties the article page into the rest of the site
+  // instead of dropping straight into a wall of plain text.
+  border-bottom: 2px solid #c9a889;
 }
 
 article img {
@@ -573,6 +723,19 @@ article p {
   &:last-child {
     margin-bottom: 0;
   }
+
+}
+
+// Echoes .hero-top__tagline's first-letter accent -- one point of color
+// right where the reader starts, instead of the article opening on flat
+// black text with no connection to the rest of the site's voice.
+// .post-meta + p (not article p:first-of-type) because .post-meta is
+// itself a <p> and comes first -- :first-of-type would target the date,
+// not the opening body paragraph.
+.post-meta + p::first-letter {
+  color: #cc5500;
+  font-size: 1.3em;
+  font-weight: 700;
 }
 
 .bookshelf {
@@ -628,6 +791,17 @@ article p {
 
 .post-nav {
   margin-top: 2rem;
+
+  // Same accent as the "Read More" links elsewhere instead of the
+  // default inherited link color -- one consistent color for "this text
+  // takes you somewhere else" across the site.
+  a {
+    color: #cc5500;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
 }
 
 .error-page {
@@ -665,17 +839,20 @@ article p {
   padding-top: 1.5rem;
 
   &__status {
-    color: #6b5540;
+    color: #5a4530;
     font-size: 0.85rem;
   }
 
-  // Same warm near-black band as .post-card__category.
+  // Was a dark pill matched to .post-card__category's badge -- that badge
+  // is gone now (see .post-card__read), leaving this the only near-black
+  // box left on the page. Brought in line with .post-card__read /
+  // .post-nav's plain orange text instead.
   &__prev,
   &__next {
-    display: inline-block;
     font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     color: #cc5500;
-    background-color: #110702;
-    padding: 0.05em 0.3em;
   }
 }

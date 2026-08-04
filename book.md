@@ -2,6 +2,7 @@
 layout: default
 title: Book
 permalink: /book/
+description: "The Gentle Arts of Living Softly by Yawney Hawn -- a book about embracing the gentle, messy side of everyday life."
 books:
   - title: "The Gentle Arts of Living Softly"
     author: "Yawney Hawn"

@@ -1,14 +1,18 @@
 <header>
-  <h1><a href="{{ '/' | relative_url }}">{{ site.title }}</a></h1>
+  <p class="site-title"><a href="{{ '/' | relative_url }}">{{ site.title }}</a></p>
   <a href="#site-menu" class="menu-toggle" aria-expanded="false" aria-controls="site-menu">
-    <span class="menu-toggle__label">Menu</span>
+    <span class="menu-toggle__icon" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+    <span class="visually-hidden">Menu</span>
   </a>
 </header>
 
 <nav id="site-menu" class="site-menu" aria-hidden="true">
   <a href="{{ '/' | relative_url }}">Home</a>
-  <a href="{{ '/about/' | relative_url }}">About</a>
+  <!-- About: re-add once the About page has real content -->
   <a href="{{ '/book/' | relative_url }}">Book</a>
-  <a href="{{ '/feed.xml' | relative_url }}">RSS</a>
   <button type="button" class="site-menu__close">Close</button>
 </nav>
