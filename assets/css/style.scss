@@ -332,7 +332,7 @@ footer {
     // photographed scene (illustration, toast, coffee, the book's own
     // "what's in store" line) as supporting detail -- headline leads, image
     // follows, rather than competing for the same spot.
-    background: url("{{ '/assets/img/background.png' | relative_url }}") 22% 22% / cover no-repeat;
+    background: url("{{ '/assets/img/background-hero.jpg' | relative_url }}") 22% 22% / cover no-repeat;
     will-change: transform;
   }
 
