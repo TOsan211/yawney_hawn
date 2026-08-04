@@ -5,48 +5,48 @@
   <section class="latest-post">
     <p class="latest-post__eyebrow">Latest Post</p>
     <h3 class="latest-post__title"><a href="{{ latest.url | relative_url }}">{{ latest.title }}</a></h3>
-    <p class="latest-post__excerpt">{{ latest.excerpt | strip_html | truncate: 160 }}</p>
+    <p class="latest-post__excerpt">{{ latest.description | default: latest.excerpt | strip_html | truncate: 160 }}</p>
     <p class="post-meta">{{ latest.date | date: "%B %-d, %Y" }}</p>
   </section>
   {% endif %}
   {% endif %}
 
-  <h2 class="post-list-heading">Newest Articles</h2>
-  <ul class="post-list">
-    {% for post in paginator.posts %}
-    <li class="post-card">
-      <div class="post-card__inner">
-        <a href="{{ post.url | relative_url }}" class="post-card__image-link" tabindex="-1" aria-hidden="true">
+  <section class="post-list-section">
+    <h2 class="post-list-heading">Newest Articles</h2>
+    <ul class="post-list">
+      {% for post in paginator.posts %}
+      <li class="post-card">
+        <div class="post-card__inner">
           {% if post.image %}
-          <img class="post-card__image" src="{{ post.image | relative_url }}" alt="">
-          {% else %}
-          <div class="post-card__image post-card__image--placeholder"></div>
+          <a href="{{ post.url | relative_url }}" class="post-card__image-link" tabindex="-1" aria-hidden="true">
+            <img class="post-card__image" src="{{ post.image | relative_url }}" alt="">
+          </a>
           {% endif %}
-        </a>
-        <div class="post-card__body">
-          <p class="post-card__meta">
-            <span class="post-card__date">{{ post.date | date: "%B %Y" }}</span>
-            {% if post.category %}<span class="post-card__category">{{ post.category }}</span>{% endif %}
-          </p>
-          <h3 class="post-card__title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
-          <p class="post-card__excerpt">{{ post.excerpt | strip_html | truncate: 120 }}</p>
+          <div class="post-card__body">
+            <p class="post-card__meta">
+              <span class="post-card__date">{{ post.date | date: "%B %Y" }}</span>
+              {% if post.category %}<span class="post-card__category">{{ post.category }}</span>{% endif %}
+            </p>
+            <h3 class="post-card__title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+            <p class="post-card__excerpt">{{ post.description | default: post.excerpt | strip_html | truncate: 160 }}</p>
+          </div>
         </div>
-      </div>
-    </li>
-    {% else %}
-    <li>No posts yet.</li>
-    {% endfor %}
-  </ul>
+      </li>
+      {% else %}
+      <li>No posts yet.</li>
+      {% endfor %}
+    </ul>
 
-  {% if paginator.total_pages > 1 %}
-  <nav class="pagination" aria-label="Post pagination">
-    {% if paginator.previous_page %}
-    <a href="{{ paginator.previous_page_path | relative_url }}" class="pagination__prev">&larr; Prev</a>
+    {% if paginator.total_pages > 1 %}
+    <nav class="pagination" aria-label="Post pagination">
+      {% if paginator.previous_page %}
+      <a href="{{ paginator.previous_page_path | relative_url }}" class="pagination__prev">&larr; Prev</a>
+      {% endif %}
+      <span class="pagination__status">Page {{ paginator.page }} of {{ paginator.total_pages }}</span>
+      {% if paginator.next_page %}
+      <a href="{{ paginator.next_page_path | relative_url }}" class="pagination__next">Next &rarr;</a>
+      {% endif %}
+    </nav>
     {% endif %}
-    <span class="pagination__status">Page {{ paginator.page }} of {{ paginator.total_pages }}</span>
-    {% if paginator.next_page %}
-    <a href="{{ paginator.next_page_path | relative_url }}" class="pagination__next">Next &rarr;</a>
-    {% endif %}
-  </nav>
-  {% endif %}
+  </section>
 </div>

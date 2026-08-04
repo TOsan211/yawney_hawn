@@ -28,16 +28,29 @@
   box-sizing: border-box;
 }
 
+// Safety net for .hero-top's full-bleed break-out below: its
+// calc(50% - 50vw) margins can be a pixel or two off (this environment's
+// 50vw measures to the outside edge of the scrollbar), which would
+// otherwise show as a sliver of horizontal scroll. body alone isn't
+// enough to suppress it here -- html needs it too.
+html {
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
+  overflow-x: hidden;
   font-family: "Asap Condensed", sans-serif;
   line-height: 1.6;
-  color: #222;
-  background: #fafafa;
+  // Matched to the sampled background tone of the hero's illustration
+  // (assets/img/background.jpg), so the page and the image sit on the
+  // same ivory rather than two slightly different creams.
+  color: #1c1b1a;
+  background: #F7F2E6;
 }
 
 a {
-  color: #1a5fb4;
+  color: #cc5500;
   text-decoration: none;
 }
 
@@ -53,21 +66,58 @@ footer {
   padding: 1.5rem;
 }
 
+// On the home page, main's own top padding (from the shared rule above)
+// was leaving a strip of flat body background between the viewport top
+// and the hero image, since .hero-top is meant to start at true y: 0 --
+// the fixed header floats over it, it doesn't push it down.
+body.is-home main {
+  padding-top: 0;
+}
+
 header {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.5rem 1rem;
-  border-bottom: 1px solid #e0e0e0;
+  // MUJI-style masthead: no rule -- generous whitespace does the
+  // separating instead of a line.
+  padding-bottom: 3rem;
 
   h1 {
-    font-size: 1.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     margin: 0;
 
     a {
       color: inherit;
     }
+  }
+}
+
+// Home only: overlaid on the hero instead of sitting in normal flow above
+// it, so .hero-top's min-height: 100vh reads as a true full-screen opener
+// with the masthead floating quietly on top of it, not pushed below it.
+// Other pages have no hero to overlay, so their header stays in flow.
+body.is-home header {
+  // Fixed (not absolute) so it stays pinned to the viewport through the
+  // whole page, not just while scrolled to the top of the document.
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding-bottom: 1.5rem;
+
+  h1,
+  .menu-toggle {
+    // No background box (it read as a flat bar cutting across the hero
+    // photo). A soft shadow keeps the text legible over whatever's behind
+    // it -- the image up top, post cards further down -- without ever
+    // covering it.
+    text-shadow: 0 1px 3px rgba(247, 242, 230, 0.9), 0 1px 8px rgba(247, 242, 230, 0.7);
   }
 }
 
@@ -80,8 +130,8 @@ header {
   padding: 1.25rem 1.75rem;
   font: inherit;
   font-weight: 700;
-  font-size: 0.9rem;
-  letter-spacing: 0.08em;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: inherit;
   text-decoration: none;
@@ -136,7 +186,7 @@ header {
     background: none;
     border: none;
     padding: 0;
-    color: #888;
+    color: #6b5540;
     font: inherit;
     font-size: 0.8rem;
     letter-spacing: 0.08em;
@@ -183,128 +233,159 @@ header {
 }
 
 footer {
-  color: #888;
+  color: #6b5540;
   font-size: 0.875rem;
-  border-top: 1px solid #e0e0e0;
+  padding-top: 1.25rem;
+  border-top: 2px solid #1c1b1a;
 }
 
 .hero-top {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  // Curtain effect disabled for now (was: position: fixed + scroll-driven
+  // transform in main.js/hero-sync.js, revealing .post-list-wrap as it slid
+  // over this section). Section structure/classes are unchanged so it can be
+  // re-enabled later; this just lays the hero out as a normal in-flow block.
+  // .hero-top is a child of <main>, which is capped at max-width: 720px --
+  // width: 100% would just fill that 720px column, not the viewport. This
+  // is the standard "full-bleed" break-out: stretch to the viewport width
+  // via negative margins rather than an explicit vw width, which avoids
+  // 100vw's scrollbar-width overflow bug while still reaching full width.
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  width: auto;
   height: 100vh;
-  z-index: 2;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 1.5rem;
-  // A faint off-white scrim over the linen/coffee-stain photo lifts the
-  // background's overall lightness a touch, so the dark hero text keeps
-  // contrast even where the texture's own darker patches would otherwise
-  // eat into it.
-  background: linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08)),
-    #F5ECD7 url("{{ '/assets/img/background.jpg' | relative_url }}") center / cover no-repeat;
-  color: #2A1810;
-  will-change: transform, opacity;
+  // The right-hand page now has its own printed line ("What's in store for
+  // today?") plus a coffee-ring smiley -- our copy would fight it for
+  // attention there, so it moves to the plain wall/tablecloth area at
+  // upper-left instead: sampled colors there are a consistent warm tan
+  // with good contrast for dark text, no competing detail.
+  align-items: flex-start;
+  justify-content: flex-start;
+  // Gaze flow: top-left is where reading naturally starts, so the
+  // headline lands there first, then the eye travels down/right into the
+  // photographed scene (illustration, toast, coffee, the book's own
+  // "what's in store" line) as supporting detail -- headline leads, image
+  // follows, rather than competing for the same spot.
+  background: url("{{ '/assets/img/background.png' | relative_url }}") 22% 22% / cover no-repeat;
 
-  &__title,
-  &__tagline {
-    // --hero-text-progress (0 to 1, driven by scroll in main.js / hero-sync.js)
-    // moves a soft blend zone down the text, like caramel syrup dripping
-    // further down a pudding. Syrup already coats the top at rest (progress
-    // 0 gives a 10%-40% blend band) and it spreads to fully cover the text
-    // by the end of the scroll zone (progress 1 pushes the band past 100%).
-    // Bottom (unswept) state is a near-black brown for WCAG contrast against
-    // the textured background; the caramel drip at top is left untouched.
-    background-image: linear-gradient(
-      to bottom,
-      #CC5500 0%,
-      #CC5500 calc(10% + var(--hero-text-progress, 0) * 90%),
-      #2A1810 calc(40% + var(--hero-text-progress, 0) * 90%),
-      #2A1810 100%
-    );
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
+  &__inner {
+    width: 100%;
+    max-width: 420px;
+    // Top padding clears the absolutely-positioned header sitting over
+    // this same area; left padding echoes the header's own inset.
+    padding: 7.5rem 1.5rem 0 2.5rem;
+    text-align: left;
   }
 
-  &__title {
-    font-size: clamp(2.5rem, 8vw, 5rem);
-    margin: 0 0 0.5rem;
+  // On tall/narrow (portrait) viewports, cover crops the wide source photo
+  // down to a much narrower horizontal slice than on desktop, which shifts
+  // what lands in the visible frame -- nudging the focal point keeps the
+  // plain wall/tablecloth area (not the book's own text) behind the copy.
+  @media (max-width: 640px) {
+    background-position: 30% 15%;
+
+    &__inner {
+      max-width: 80vw;
+      padding: 6.5rem 6vw 0 6vw;
+    }
+
+    &__tagline {
+      font-size: clamp(1.35rem, 7vw, 1.85rem);
+    }
   }
 
+  // The site name no longer appears here (it's the header's job now, kept
+  // small and out of the way) -- the catchphrase is the whole hero, sized
+  // like a magazine cover line instead of a small caption under a logo.
   &__tagline {
-    font-size: 1.1rem;
+    margin: 0 0 1.25rem;
+    font-size: clamp(1.5rem, 4.5vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    line-height: 1.15;
+    color: #1c1b1a;
+
+    // Initial letter picked out in the accent color, slightly larger --
+    // no box/border this time, just color and scale doing the work.
+    &::first-letter {
+      color: #cc5500;
+      font-size: 1.15em;
+    }
+  }
+
+  // Every word's initial letter is bumped up the same amount as the
+  // tagline's own leading E, but stays ink-colored -- one consistent
+  // typesetting rule (a little bounce on every word-start) instead of two
+  // isolated accents, so the E's color reads as the single deliberate mark.
+  // ::first-letter only attaches to block containers or inline-block boxes
+  // -- a plain inline <span> is silently ignored, hence inline-block here.
+  &__word {
+    display: inline-block;
+
+    &::first-letter {
+      font-size: 1.15em;
+    }
+  }
+
+  // Headline sits directly on the wall (sampled colors there are plain and
+  // high-contrast enough on their own); the subtext gets a light band
+  // behind it too, as extra insurance where the wall gives way to the
+  // more varied tablecloth/table-edge tones further down.
+  &__subtext {
+    display: inline-block;
     margin: 0;
+    padding: 0.4rem 0.7rem;
+    background: rgba(247, 242, 230, 0.6);
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    color: #cc5500;
   }
 }
 
+// .post-curtain / &--plain / .post-list-wrap keep their original class
+// names (structure unchanged) even though the curtain's sticky/spacer
+// mechanics below are currently switched off -- both variants now just lay
+// out normally, one after another.
 .post-curtain {
   position: relative;
-
-  &::after {
-    content: "";
-    display: block;
-    // hero-top finishes its own lift after 100vh of scroll, but the post
-    // list's sticky window is deliberately longer than that so scrolling
-    // keeps "idling" for a while (nothing visibly moves) before it releases.
-    // +100vh here accounts for the .latest-post spotlight riding along
-    // inside the same sticky wrapper on the home page.
-    min-height: calc(200vh + 30vh);
-  }
-
-  // Paginated pages beyond page 1 render with no hero-top to uncover, so skip
-  // the sticky/spacer curtain trick entirely and lay the list out normally.
-  &--plain {
-    &::after {
-      display: none;
-    }
-
-    .post-list-wrap {
-      position: static;
-      min-height: 0;
-      padding-top: 0;
-    }
-  }
 }
 
-// Sticky/min-height live here (not on .post-list) so the pagination nav
-// riding along inside the wrapper stays pinned with the visible posts,
-// instead of appearing only after scrolling past a full extra viewport.
 .post-list-wrap {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  min-height: 100vh;
-  background: #fafafa;
+  // No background/blur panel here anymore -- it was visually fusing
+  // .latest-post and .post-list-section into one block. Both sections now
+  // sit directly on the shared body linen texture; the padding below is
+  // the only thing this wrapper still contributes.
   padding-top: 3rem;
 }
 
 .latest-post {
-  min-height: 100vh;
+  // Was min-height: 100vh + justify-content: center, sized to spotlight
+  // this section for a full viewport during the (now-disabled) curtain
+  // reveal. Sized to its content instead so it doesn't leave a dead
+  // full-screen gap above "Newest Articles".
   display: flex;
   flex-direction: column;
-  justify-content: center;
   gap: 0.75rem;
-  padding-bottom: 2rem;
-  margin-bottom: 2rem;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 3rem 0 2.5rem;
+  margin-bottom: 3rem;
+  border-bottom: 2px solid #1c1b1a;
 
   &__eyebrow {
     margin: 0;
-    color: #888;
+    color: #cc5500;
     font-size: 0.8rem;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
   }
 
   &__title {
     margin: 0;
-    font-size: clamp(1.75rem, 5vw, 2.75rem);
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
 
     a {
       color: inherit;
@@ -313,19 +394,24 @@ footer {
 
   &__excerpt {
     margin: 0;
-    color: #444;
+    color: #5c4a38;
     font-size: 1.05rem;
   }
 }
 
 .post-list-heading {
-  margin: 0 0 2.5rem;
-  text-align: center;
-  font-size: clamp(1.5rem, 4vw, 2rem);
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin: 0 0 2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #1c1b1a;
+  text-align: left;
+  font-size: 0.85rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #4B2E1E;
+  color: #1c1b1a;
 }
 
 .post-list {
@@ -333,115 +419,160 @@ footer {
   margin: 0 0 2rem;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 2.75rem 1.75rem;
-  align-items: start;
+  grid-template-columns: 1fr;
+  // Two columns, not three -- these cards are text-first now (most posts
+  // have no image at all), and a 3-up grid left excerpts too cramped to
+  // read comfortably at this container width.
+  gap: 2.5rem 2.5rem;
+  // stretch (not start) so every card in a row shares the row's tallest
+  // height -- rows read as tidy and even instead of a ragged bottom edge.
+  align-items: stretch;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-// Deckle-edge "torn paper" card, finely jagged on all four sides. The
-// shadow lives on the outer .post-card (via filter: drop-shadow, not
-// box-shadow, so it follows the jagged silhouette) while clip-path lives on
-// .post-card__inner -- splitting them across two elements is required
-// because filter and clip-path both apply to the same box in filter ->
-// clip-path order, so a single element's clip-path would cut off its own
-// drop-shadow wherever the shadow extends past the box edge.
+// Flat, typography-led card: no photo texture, no blur/glass, no drop
+// shadow, no full box. Two corner brackets (like kagi-kakko, 「 」) mark the
+// card's extent without enclosing it -- a frame reference, not a box. Kept
+// quiet (muted tone, hairline weight) so they read as a structural aside,
+// not competing with the title/copy for attention.
 .post-card {
-  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.08));
+  height: 100%;
 
   &__inner {
     display: flex;
     flex-direction: column;
-    // Same linen photo as the hero, cropped to its top-left corner (away
-    // from the coffee-ring stain, which sits in the lower-right of the
-    // frame). The scrim fades from a light 40% at top to a denser 82% at
-    // bottom, so the body text underneath keeps strong contrast.
-    background: linear-gradient(rgba(255, 255, 255, 0.4), rgb(255 255 255 / 82%)),
-      url("{{ '/assets/img/background.jpg' | relative_url }}") left top / cover no-repeat;
-    clip-path: polygon(
-      0.0% 0.58%, 4.0% 0.36%, 8.0% 0.10%, 12.0% 0.70%, 16.0% 0.08%, 20.0% 0.40%,
-      24.0% 0.55%, 28.0% 0.01%, 32.0% 0.65%, 36.0% 0.24%, 40.0% 0.20%, 44.0% 0.67%,
-      48.0% 0.02%, 52.0% 0.51%, 56.0% 0.44%, 60.0% 0.06%, 64.0% 0.69%, 68.0% 0.14%,
-      72.0% 0.32%, 76.0% 0.61%, 80.0% 0.00%, 84.0% 0.61%, 88.0% 0.32%, 92.0% 0.14%,
-      96.0% 0.69%, 100.0% 0.05%,
-      99.97% 4.0%, 99.51% 8.0%, 99.54% 12.0%, 99.96% 16.0%, 99.31% 20.0%, 99.85% 24.0%,
-      99.70% 28.0%, 99.38% 32.0%, 100.00% 36.0%, 99.41% 40.0%, 99.66% 44.0%, 99.88% 48.0%,
-      99.30% 52.0%, 99.93% 56.0%, 99.58% 60.0%, 99.47% 64.0%, 99.99% 68.0%, 99.34% 72.0%,
-      99.78% 76.0%, 99.78% 80.0%, 99.34% 84.0%, 99.99% 88.0%, 99.47% 92.0%, 99.58% 96.0%,
-      99.93% 100.0%,
-      96.0% 99.95%, 92.0% 99.31%, 88.0% 99.86%, 84.0% 99.68%, 80.0% 99.39%, 76.0% 100.00%,
-      72.0% 99.39%, 68.0% 99.68%, 64.0% 99.86%, 60.0% 99.31%, 56.0% 99.94%, 52.0% 99.56%,
-      48.0% 99.49%, 44.0% 99.98%, 40.0% 99.33%, 36.0% 99.80%, 32.0% 99.76%, 28.0% 99.35%,
-      24.0% 99.99%, 20.0% 99.45%, 16.0% 99.60%, 12.0% 99.92%, 8.0% 99.30%, 4.0% 99.90%,
-      0.0% 99.64%,
-      0.09% 96.0%, 0.38% 92.0%, 0.56% 88.0%, 0.01% 84.0%, 0.65% 80.0%, 0.26% 76.0%,
-      0.19% 72.0%, 0.68% 68.0%, 0.03% 64.0%, 0.50% 60.0%, 0.45% 56.0%, 0.05% 52.0%,
-      0.69% 48.0%, 0.15% 44.0%, 0.31% 40.0%, 0.62% 36.0%, 0.00% 32.0%, 0.60% 28.0%,
-      0.33% 24.0%, 0.13% 20.0%, 0.70% 16.0%, 0.06% 12.0%, 0.43% 8.0%, 0.52% 4.0%
-    );
+    height: 100%;
+    position: relative;
+    padding: 1.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    // Bumped from ~2% alpha (imperceptible) to ~4%, enough to actually
+    // register as a faint warm tint instead of doing nothing.
+    background-color: #903c000a;
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 10px;
+      transition: border-color 0.2s ease;
+    }
+
+    // Color is inlined into each border shorthand rather than set once via
+    // border-color -- a bare `border-top: 1px solid;` (no color given)
+    // resets border-top-color to currentColor, clobbering a separate
+    // border-color declaration regardless of source order.
+    &::before {
+      top: 0;
+      left: 0;
+      border-top: 1px solid #b8a488;
+      border-left: 1px solid #b8a488;
+    }
+
+    &::after {
+      bottom: 0;
+      right: 0;
+      border-bottom: 1px solid #b8a488;
+      border-right: 1px solid #b8a488;
+    }
+  }
+
+  // Hover: one quiet cue -- brackets deepen from their resting tone to full
+  // ink. No lift/transform and no title color swap; those together read as
+  // too much motion for a plain text card.
+  &:hover .post-card__inner {
+    &::before,
+    &::after {
+      border-color: #1c1b1a;
+    }
   }
 
   &__image-link {
     display: block;
+    // Bled flush to the box edges (negative margin cancels the inner
+    // padding on three sides -- top uses -1rem since padding-top is now
+    // 1rem, not the 1.5rem horizontal padding) so the image sits right up
+    // against the top-left bracket instead of floating inset from it.
+    margin: -1rem -1.5rem 1rem;
   }
 
   &__image {
     display: block;
     width: 100%;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 3 / 2;
     object-fit: cover;
-
-    &--placeholder {
-      background: linear-gradient(135deg, #efe3c9, #e3d2a8);
-    }
   }
 
   &__body {
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
-    padding: 1.1rem 1.25rem 1.75rem;
   }
 
   &__meta {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    margin: 0;
-    font-size: 0.75rem;
-    letter-spacing: 0.06em;
+    gap: 0.5rem;
+    margin: 0 0 0.15rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #888;
+    color: #6b5540;
   }
 
+  // Vivid orange text again, fixed via background this time. #cc5500 is
+  // mid-luminance, so no light or mid-tone background can ever reach
+  // 4.5:1 with it (even pure white only gets to ~4.3:1) -- only a
+  // near-black background works. This uses a warm near-black (coffee,
+  // not neutral ink) instead of #1c1b1a, so it's not a flat UI-black box.
   &__category {
+    display: inline-block;
     font-weight: 700;
     color: #cc5500;
+    background-color: #110702;
+    padding: 0.05em 0.3em;
   }
 
   &__title {
     margin: 0;
-    font-size: 1.2rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.25;
 
     a {
-      color: #2a1810;
+      color: #1c1b1a;
     }
   }
 
   &__excerpt {
     margin: 0;
-    color: #444;
-    font-size: 0.95rem;
+    color: #5c4a38;
+    font-size: 0.92rem;
   }
 }
 
 .post-meta {
-  color: #888;
+  color: #6b5540;
   font-size: 0.85rem;
   margin: 0 0 1rem;
 }
 
 article img {
   max-width: 100%;
+}
+
+article p {
+  margin: 0 0 1.5rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .bookshelf {
@@ -451,7 +582,7 @@ article img {
   gap: 2rem;
   margin-top: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 6px solid #d8c9a3;
+  border-bottom: 2px solid #1c1b1a;
 
   &__item {
     display: flex;
@@ -485,7 +616,7 @@ article img {
 
   &__author {
     margin: 0 0 0.5rem;
-    color: #888;
+    color: #6b5540;
     font-size: 0.8rem;
   }
 
@@ -530,17 +661,21 @@ article img {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 3.5rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #e0e0e0;
 
   &__status {
-    color: #888;
+    color: #6b5540;
     font-size: 0.85rem;
   }
 
+  // Same warm near-black band as .post-card__category.
   &__prev,
   &__next {
+    display: inline-block;
     font-weight: 700;
+    color: #cc5500;
+    background-color: #110702;
+    padding: 0.05em 0.3em;
   }
 }
