@@ -8,6 +8,7 @@ books:
     author: "Yawney Hawn"
     amazon_url: "https://www.amazon.com/dp/B0H6JYYM1L"
     image: "/assets/img/books/the_gentle_arts_of_living_softly.jpg"
+    kindle_unlimited: true
 ---
 
 # Book
@@ -21,6 +22,9 @@ books:
     <h3 class="bookshelf__title">{{ book.title }}</h3>
     <p class="bookshelf__author">{{ book.author }}</p>
     <a href="{{ book.amazon_url }}" target="_blank" rel="noopener noreferrer" class="bookshelf__buy">View on Amazon</a>
+    {% if book.kindle_unlimited %}
+    <p class="bookshelf__ku">Free with Kindle Unlimited</p>
+    {% endif %}
   </div>
   {% endfor %}
 </div>

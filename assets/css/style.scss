@@ -787,6 +787,16 @@ article p {
     font-size: 0.85rem;
     font-weight: 700;
   }
+
+  // Small, quiet note under the buy link -- "free" is a strong conversion
+  // trigger on its own, so it doesn't need extra visual weight to earn
+  // attention the way a badge/pill would.
+  &__ku {
+    margin: 0.25rem 0 0;
+    color: #6b5540;
+    font-size: 0.72rem;
+    font-style: italic;
+  }
 }
 
 .post-nav {
