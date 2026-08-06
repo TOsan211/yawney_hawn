@@ -54,4 +54,4 @@ git commit -m "Set up Jekyll blog"
 git push
 ```
 
-数分後、`https://TOsan211.github.io/yawney_hawn/` でアクセス可能になります。
+数分後、`https://www.yawney-hawn.com/` でアクセス可能になります。
