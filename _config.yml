@@ -12,6 +12,12 @@ noindex: true
 url: "https://www.yawney-hawn.com"
 baseurl: ""
 
+# jekyll-seo-tag defaults twitter:card to summary_large_image whenever a
+# page has an image; force the smaller "summary" card sitewide so the
+# description text still shows alongside the image on X.
+twitter:
+  card: summary
+
 markdown: kramdown
 permalink: /posts/:year/:month/:day/:title/
 
