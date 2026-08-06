@@ -3,6 +3,7 @@ layout: post
 title: "What a Loose Shoelace Gives Us"
 description: "No life hacks, no productivity tips—just an untied knot, a clumsy stop, and a gentle reminder that you don't always have to rush past the small things."
 category: Essay
+image: /assets/img/ogp/20260806_01.jpg
 ---
 
 The silent margin of a loose knot.
